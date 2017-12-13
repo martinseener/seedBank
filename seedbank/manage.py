@@ -92,14 +92,6 @@ class Manage:
         utils.make_dirs(directory)
         utils.file_copy(src, dst)
 
-    def _disable_usb(self, temp_initrd):
-        """remove usb storage support from initrd"""
-        for root, _, _ in os.walk(temp_initrd):
-            if 'kernel/drivers/usb/storage' in root:
-                if utils.rmtree(root):
-                    logging.info('usb storage support has been disabled in the '
-                        'initrd image (fixes "root partition not found" error)')
-
     def _debian_firmware(self, name):
         """integrate Debian non free firmware"""
         temp_initrd = os.path.join(self.temp, 'initrd')
@@ -109,7 +101,6 @@ class Manage:
         utils.initrd_extract(temp_initrd, initrd)
         dst = os.path.join(self.temp, 'initrd/lib/firmware')
         self._add_firmware(name, dst)
-        self._disable_usb(temp_initrd)
         utils.initrd_create(temp_initrd, initrd)
         utils.rmtree(temp_initrd)
 
